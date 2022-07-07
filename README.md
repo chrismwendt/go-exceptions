@@ -1,6 +1,6 @@
 # go-exceptions
 
-Ergonomic error handling in Go.
+Ergonomic error handling in Go. Check out [this post](https://dev.to/chrismwendt/ergonomic-error-handling-in-go-using-generics-17b9) for more details.
 
 ## Example
 
