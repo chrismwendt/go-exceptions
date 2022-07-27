@@ -6,12 +6,20 @@ import (
 	"strings"
 )
 
+type Exception struct {
+	err error
+}
+
+func (e Exception) Error() string {
+	return e.err.Error()
+}
+
 func Catch(err *error) {
 	if v := recover(); v != nil {
-		if e, ok := v.(error); ok {
-			*err = e
+		if e, ok := v.(Exception); ok {
+			*err = e.err
 		} else {
-			*err = fmt.Errorf("%+v", v)
+			panic(v)
 		}
 	}
 }
@@ -43,20 +51,20 @@ func wrap(e error, msgs ...string) error {
 
 	pc, _, _, ok := runtime.Caller(2)
 	if !ok {
-		return e
+		return Exception{err: e}
 	}
 
 	details := runtime.FuncForPC(pc)
 	if details == nil {
-		return e
+		return Exception{err: e}
 	}
 
 	name := details.Name()
 	name = strings.ReplaceAll(name, "[...]", "")
 	components := strings.Split(name, ".")
 	if len(components) < 1 {
-		return e
+		return Exception{err: e}
 	}
 	e = fmt.Errorf("%s: %w", components[len(components)-1]+"()", e)
-	return e
+	return Exception{err: e}
 }

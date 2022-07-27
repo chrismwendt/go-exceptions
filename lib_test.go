@@ -28,7 +28,8 @@ func TestThrow(t *testing.T) {
 func TestCatch(t *testing.T) {
 	err := func() (err error) {
 		defer Catch(&err)
-		panic("💥")
+		Throw(fmt.Errorf("💥"))
+		return
 	}()
 
 	if err == nil {
